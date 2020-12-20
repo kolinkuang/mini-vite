@@ -1,4 +1,4 @@
-import {log} from '../util.js';
+import {log} from './util.js';
 import {createApp} from 'vue';
 
 console.log(createApp);

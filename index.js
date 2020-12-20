@@ -1,45 +1,26 @@
 const Koa = require('koa');
 const app = new Koa();
-const Parser = require('./parser');
+const {parseHomePage} = require('./src/node/server/pluginHomePage');
+const {parseNodeModule} = require('./src/node/server/pluginNodeModule');
+const {parseSingleVue} = require('./src/node/server/pluginSingleVue');
+const {parseCss} = require('./src/node/server/pluginCss');
+const {parseJs} = require('./src/node/server/pluginJs');
+const {parsePng} = require('./src/node/server/pluginPng');
+const {parseIco} = require('./src/node/server/pluginIco');
 
 app.use(ctx => {
 
-    const {request: {url, query}} = ctx;
+    const resolvedPlugins = [
+        parseHomePage,
+        parseNodeModule,
+        parseSingleVue,
+        parseCss,
+        parseJs,
+        parsePng,
+        parseIco
+    ];
 
-    console.log(`Parsing ${url}`);
-
-    switch (true) {
-        case /^\/$/.test(url):
-            Parser.homePage(url, ctx);
-            break;
-
-        case /^\/@modules\/.*/.test(url):
-            Parser.nodeModule(url, ctx);
-            break;
-
-        case /\.vue/.test(url):
-            Parser.singleVue(url, query, ctx);
-            break;
-
-        case /.*\.css$/.test(url):
-            Parser.css(url, ctx);
-            break;
-
-        case /.*\.js$/.test(url):
-            Parser.js(url, ctx);
-            break;
-
-        case /.*\.png$/.test(url):
-            Parser.png(url, ctx);
-            break;
-
-        case /.*\.ico$/.test(url):
-            Parser.ico(url, ctx);
-            break;
-
-        default:
-            return;
-    }
+    resolvedPlugins.forEach(plugin => plugin && plugin(ctx));
 });
 
 app.listen(3001, () => console.log('listen to me, 3001 port, up~~'));
