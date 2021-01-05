@@ -8,7 +8,7 @@ function parsePng(ctx) {
 
     console.log(`Parsing ${url}`);
 
-    getFileContentByType(url, 'image/parsePng', ctx);
+    getFileContentByType(url, 'image/png', ctx);
 }
 
 module.exports = {parsePng};
